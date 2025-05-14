@@ -1,7 +1,4 @@
-/* Apply gradient to the entire page */
-body {
-background: linear-gradient(80deg, #e8eaec, #7d9ad4, #4da1eb);
-}
+
 
 /* Container styling */
 .profileContainer {

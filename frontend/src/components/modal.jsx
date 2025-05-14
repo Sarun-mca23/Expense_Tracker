@@ -27,7 +27,7 @@ const Modal = ({ binInput, setBinInput, onSuccess, setModel, userBin }) => {
     <div className={style.modal}>
   <div className={style.modalContent}>
     <form onSubmit={handleSubmit}>
-      <label>Enter BIN</label>
+      <label>Enter PIN</label>
       <input
         type="text"
         value={binInput}

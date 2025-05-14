@@ -3,17 +3,17 @@
   "name": "Expense Tracker",
   "icons": [
     {
-      "src": "risa2.png",
+      "src": "l2(1).jbg",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "risa2.png",
+      "src": "l2(1).jbg",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "risa2.png",
+      "src": "l2(1).jbg",
       "type": "image/png",
       "sizes": "512x512"
     }

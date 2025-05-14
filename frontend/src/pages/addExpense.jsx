@@ -34,7 +34,7 @@ const AddExpensePage = () => {
 
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user/me`, {
+        const response = await axios.get('https://expense-tracker-backend-0h9t.onrender.com/api/user/me', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -101,7 +101,7 @@ const AddExpensePage = () => {
   
       // Send the request with the expense details and email
       await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/expenses/add`,
+        'https://expense-tracker-backend-0h9t.onrender.com/api/expenses/add',
         {
           description,
           category,

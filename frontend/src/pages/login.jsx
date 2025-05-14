@@ -16,7 +16,7 @@ const LoginPage = () => {
     setLoading(true); // Start loading when submitting
 
     try {
-      const response = await axios.post("http://localhost:2022/api/auth/login", {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth/login`, {
         email,
         password,
       });
@@ -34,7 +34,7 @@ const LoginPage = () => {
 
         // Fetch user profile data after login using the saved token
         const token = localStorage.getItem('UserToken');
-        const profileResponse = await axios.get("http://localhost:2022/api/user/me", {
+        const profileResponse = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user/me`, {
           headers: {
             Authorization: `Bearer ${token}`,  // Send token in headers for authentication
           },

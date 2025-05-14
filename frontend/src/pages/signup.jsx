@@ -186,7 +186,7 @@ export default function SignUpPage() {
 
           <div className={styles.inputGroup}>
             <label htmlFor="bin" className={styles.label}>
-              BIN (4 digits)
+              PIN (4 digits)
             </label>
             <input
               type="text"

@@ -118,22 +118,34 @@ body {
   .navbar{
     padding: 20px;
   }
-  .navLinks {
-    display: none;
-    flex-direction: column;
-    width: 100%;  /* Make navLinks span the full width on mobile */
-    position: absolute;
-    top: 60px; /* Adjust this to align below the navbar */
-    left: 0;
-    background-color: #5675f1;
-    text-align: center;
-    padding-left: 20px;  /* Padding for mobile */
-    z-index: 1000;  /* Ensure the menu stays on top */
-  }
+.navLinks {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  background-color: #007bff;
+  text-align: center;
+  padding-left: 20px;
+  z-index: 1000;
 
-  .navLinks.active {
-    display: flex;
-  }
+  /* Animation setup */
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.4s ease;
+}
+
+/* When active (menu open) */
+.navLinks.active {
+  max-height: 500px; /* Large enough to fit menu */
+  opacity: 1;
+  transform: translateY(0);
+}
+
 
   .navLinks li {
     margin: 1rem 0;

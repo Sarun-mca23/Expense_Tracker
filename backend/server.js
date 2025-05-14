@@ -11,11 +11,22 @@ const expenseRoutes = require('./route/expenseRoutes');
 const app = express();
 
 // Middleware
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://expense-tracker-frontend-bz32.onrender.com"
+];
+
 app.use(cors({
-  origin: "https://expense-tracker-frontend-bz32.onrender.com", // allow your live frontend
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
+
 app.use(express.json());
 
 // Routes

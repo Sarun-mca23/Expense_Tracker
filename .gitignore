@@ -1,0 +1,7 @@
+# Ignore node_modules and other build files
+node_modules/
+dist/
+build/
+
+# Ignore IDE settings
+.vscode/

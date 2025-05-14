@@ -16,7 +16,7 @@ const LoginPage = () => {
     setLoading(true); // Start loading when submitting
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth/login`, {
+      const response = await axios.post('https://expense-tracker-backend-0h9t.onrender.com/api/auth/login', {
         email,
         password,
       });

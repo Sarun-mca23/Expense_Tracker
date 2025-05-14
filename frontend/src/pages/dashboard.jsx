@@ -35,7 +35,7 @@ export default function Dash() {
 
     const fetchUserDetails = async () => {
       try {
-        const response = await fetch('http://localhost:2022/api/user/me', {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/me`, {
           headers: {
             'Authorization': `Bearer ${storedToken}`,
           },

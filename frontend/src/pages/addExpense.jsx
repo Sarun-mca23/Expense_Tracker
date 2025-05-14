@@ -116,7 +116,7 @@ const AddExpensePage = () => {
   
       // Update balance after adding expense
       await axios.post(
-        'http://localhost:2022/api/user/updateBalance',
+        'https://expense-tracker-backend-0h9t.onrender.com/api/user/updateBalance',
         { balance: newBalance },
         { headers: { Authorization: `Bearer ${token}` } }
       );

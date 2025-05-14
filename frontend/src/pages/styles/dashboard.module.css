@@ -7,6 +7,7 @@
     overflow: hidden;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     background: linear-gradient(80deg, #e8eaec, #7d9ad4, #4da1eb);
+}
 
 /* Top bar navigation */
 .topBar {

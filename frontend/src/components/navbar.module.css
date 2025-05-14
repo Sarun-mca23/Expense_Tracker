@@ -32,7 +32,7 @@ body {
   letter-spacing: 3px;
   position: relative;
   transition: all 0.4s ease-in-out;
-  background: linear-gradient(90deg, #e0e0f6, #060c78, #afafb4);
+  background: linear-gradient(90deg, #ffffff, #060c78, #ffffff);
   background-size: 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

@@ -34,7 +34,7 @@ const AddExpensePage = () => {
 
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('http://localhost:2022/api/user/me', {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -101,7 +101,7 @@ const AddExpensePage = () => {
   
       // Send the request with the expense details and email
       await axios.post(
-        'http://localhost:2022/api/expenses/add',
+        `${process.env.REACT_APP_API_BASE_URL}/api/expenses/add`,
         {
           description,
           category,

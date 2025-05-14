@@ -71,7 +71,7 @@ export default function SignUpPage() {
 
     // Submit form to backend
     try {
-      const response = await fetch('http://localhost:2022/api/auth/signup', {  // adjust URL & port if needed
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/auth/signup`, {  // adjust URL & port if needed
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

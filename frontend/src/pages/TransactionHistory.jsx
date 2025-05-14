@@ -16,7 +16,7 @@ const TransactionHistory = () => {
 
         const fetchTransactions = async () => {
             try {
-                const response = await fetch('http://localhost:2022/api/user/history', {
+                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/user/history`, {
                     method: 'GET',
                     headers: {
                         Authorization: `Bearer ${token}`,

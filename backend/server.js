@@ -12,9 +12,9 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'https://your-frontend.onrender.com',  // Adjust this to your frontend URL
-  methods: ['GET', 'POST'],
-  credentials: true,
+  origin: "https://expense-tracker-frontend-bz32.onrender.com", // allow your live frontend
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
 }));
 app.use(express.json());
 

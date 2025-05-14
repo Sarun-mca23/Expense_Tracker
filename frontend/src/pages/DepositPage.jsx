@@ -35,7 +35,7 @@ const TransactionPage = () => {
 
     const fetchUserProfile = async () => {
       try {
-        const res = await axios.get("http://localhost:2022/api/user/me", {
+        const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -81,7 +81,7 @@ const TransactionPage = () => {
 
     try {
       const res = await axios.post(
-        `http://localhost:2022/api/user/${actionType}`,   // ✅ No userId in URL anymore
+        `${process.env.REACT_APP_API_BASE_URL}/api/user/${actionType}`,   // ✅ No userId in URL anymore
         { amount: transactionAmount },
         {
           headers: {

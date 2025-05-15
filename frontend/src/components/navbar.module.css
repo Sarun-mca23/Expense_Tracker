@@ -5,7 +5,7 @@ body {
 }
 
 .navbar {
-  background-color: #007bff;
+  background-color: #ffffff;
   padding: 0.6rem;
   position: fixed;
   width: 100%;
@@ -13,9 +13,7 @@ body {
   left: 0;
   z-index: 1000;
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for depth */
 }
-
 
 .navbarContainer {
   display: flex;
@@ -29,11 +27,11 @@ body {
 .logo a {
   color: white;
   text-decoration: none;
-  font-size: 30px;
+  font-size: 20px;
   font-weight: bold;
   letter-spacing: 3px;
   position: relative;
-  transition: all 0.4s ease-in-out;
+  transition: all 5s ease-in-out;
   background: linear-gradient(90deg, #ffffff, #060c78, #ffffff);
   background-size: 200%;
   -webkit-background-clip: text;
@@ -106,7 +104,7 @@ body {
 .hamburger {
   display: none;
   font-size: 30px;
-  color: white;
+  color: rgb(11, 16, 81);
   cursor: pointer;
   /* Position the hamburger icon on the right */
   position: absolute;
@@ -120,34 +118,22 @@ body {
   .navbar{
     padding: 20px;
   }
-.navLinks {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  position: absolute;
-  top: 60px;
-  left: 0;
-  background-color: #007bff;
-  text-align: center;
-  padding-left: 20px;
-  z-index: 1000;
+  .navLinks {
+    display: none;
+    flex-direction: column;
+    width: 100%;  /* Make navLinks span the full width on mobile */
+    position: absolute;
+    top: 60px; /* Adjust this to align below the navbar */
+    left: 0;
+    background-color: #b8c7f7;
+    text-align: center;
+    padding-left: 20px;  /* Padding for mobile */
+    z-index: 1000;  /* Ensure the menu stays on top */
+  }
 
-  /* Animation setup */
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(-20px);
-  transition: all 0.4s ease;
-}
-
-/* When active (menu open) */
-.navLinks.active {
-  max-height: 500px; /* Large enough to fit menu */
-  opacity: 1;
-  transform: translateY(0);
-}
-
+  .navLinks.active {
+    display: flex;
+  }
 
   .navLinks li {
     margin: 1rem 0;

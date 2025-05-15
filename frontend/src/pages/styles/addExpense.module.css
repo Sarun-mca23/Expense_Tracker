@@ -1,4 +1,6 @@
-
+body{
+ background: #b8c7f7;
+}
 
 /* Main container for the add expense section */
 /* Container for the page */
@@ -7,13 +9,15 @@
   justify-content: center;
   align-items: center;
   min-height: 91vh;
-  background: linear-gradient(80deg, #e8eaec, #7d9ad4, #4da1eb);
+
 }
 
 /* Main container for the add expense section */
 .DepositeContainer {
-  background: linear-gradient(80deg, #e8eaec,  #8fb1ce);
+  background: linear-gradient(80deg, #fafdff,  #ffffff);
   padding: 30px;
+  margin-left: 10px;
+  margin-right: 10px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   width: 400px;
@@ -43,10 +47,10 @@ label {
 /* General input field styling */
 input, select {
   padding: 12px; /* Increased padding for better readability */
-  border: 1px solid #ccc;
+  border: 1px solid #656566;
   border-radius: 5px;
   font-size: 16px;
-  color: #333;
+  color: #333333;
   width: 100%; /* Full-width input fields */
   box-sizing: border-box; /* Ensure padding doesn't affect the width */
 }

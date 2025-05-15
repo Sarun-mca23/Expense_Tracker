@@ -154,7 +154,9 @@ const ExpenseTable = () => {
   if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
     <img src={myGif} alt="Loading..." style={{ maxWidth: '100px' }} />
   </div>;
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+   <p Error: {error}style={{ maxWidth: '100px' }} />
+  </div>;<div>Error: {error}</div>;
 
   return (
     <div className={styles.container}>

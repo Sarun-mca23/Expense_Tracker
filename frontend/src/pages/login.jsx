@@ -1,62 +1,61 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import styles from "./styles/login.module.css"; // Your CSS module
+import styles from "./styles/login.module.css";
+import { useAuth } from "../Context/AuthContext";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { isAuthenticated, login } = useAuth();
+
+  // 🚫 If already logged in, redirect to dashboard
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading when submitting
+    setLoading(true);
 
     try {
-      const response = await axios.post('https://expense-tracker-backend-0h9t.onrender.com/api/auth/login', {
+      const response = await axios.post("https://expense-tracker-backend-0h9t.onrender.com/api/auth/login", {
         email,
         password,
       });
 
-      // Check if the response contains a token
-      if (response.data.token) {
-        // Save the token in localStorage
-        localStorage.setItem("UserToken", response.data.token);
+      const token = response.data.token;
+      if (token) {
+        localStorage.setItem("UserToken", token);
 
-        // Log the token to ensure it's saved correctly
-        console.log("Token saved:", response.data.token);
-
-        // Notify the user of successful login
-        toast.success("Login successful!");
-
-        // Fetch user profile data after login using the saved token
-        const token = localStorage.getItem('UserToken');
-        const profileResponse = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/user/me`, {
+        const profileResponse = await axios.get("https://expense-tracker-backend-0h9t.onrender.com/api/user/me", {
           headers: {
-            Authorization: `Bearer ${token}`,  // Send token in headers for authentication
+            Authorization: `Bearer ${token}`,
           },
         });
 
-        // Log the profile data (including userId)
-        console.log("Profile data:", profileResponse.data);
+        const userData = profileResponse.data;
 
-        // Navigate to the dashboard page
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 1000); // Redirect after 1 second to show success toast
+        // ✅ Use AuthContext login function
+        login(userData);
+
+        toast.success("Login successful!");
+        setTimeout(() => navigate("/dashboard"), 1000);
       }
     } catch (error) {
-      // If error occurs, show the appropriate error message
       if (error.response) {
-        toast.error(error.response.data.message || "Login failed. Try again later.");
+        toast.error(error.response.data.message || "Login failed. Try again.");
       } else {
         toast.error("An error occurred. Please try again.");
       }
     } finally {
-      setLoading(false); // Stop loading when finished
+      setLoading(false);
     }
   };
 
@@ -104,17 +103,7 @@ const LoginPage = () => {
         </p>
       </div>
 
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+      <ToastContainer position="top-center" autoClose={5000} />
     </div>
   );
 };

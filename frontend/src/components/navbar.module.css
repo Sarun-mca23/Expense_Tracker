@@ -125,7 +125,7 @@ body {
     position: absolute;
     top: 60px; /* Adjust this to align below the navbar */
     left: 0;
-    background-color: #b8c7f7;
+    background-color: #0633d8b4;
     text-align: center;
     padding-left: 20px;  /* Padding for mobile */
     z-index: 1000;  /* Ensure the menu stays on top */

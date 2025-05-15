@@ -1,15 +1,18 @@
+/* Apply gradient to the entire page */
 body {
-  background: linear-gradient(80deg, #ffffff, #ffffff, #ffffff);
+  background: #b8c7f7 ;
 }
+
+
 /* Container styling */
 .profileContainer {
-    position: relative;
-    padding: 5rem 0.3rem;
-    min-height: 100vh;
-    width: 100%;
-    overflow: hidden;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    background: linear-gradient(80deg, #e8eaec, #7d9ad4, #4da1eb);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px ;
+  max-width: 1000px;
+  margin: 5rem auto;
+  color: #333;
+  background:  #b2c3f8;
+  border-radius: 8px;
 }
 
 /* Top bar navigation */

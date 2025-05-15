@@ -4,6 +4,7 @@ import styles from './styles/dashboard.module.css';
 import Modal from '../components/modal';
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
+import myGif from './assets/Loading.gif';
 
 export default function Dash() {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ export default function Dash() {
 
     const fetchUserDetails = async () => {
       try {
-        const response = await fetch('https://expense-tracker-backend-0h9t.onrender.com/api/user/me', {
+        const response = await fetch('http://localhost:2022/api/user/me', {
           headers: {
             'Authorization': `Bearer ${storedToken}`,
           },
@@ -66,10 +67,16 @@ export default function Dash() {
     fetchUserDetails();
   }, [navigate]);
 
+  // Show loading GIF while user data is being fetched
   if (isLoading) {
-    return <div>Loading user details...</div>;
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <img src={myGif} alt="Loading..." style={{ maxWidth: '100px' }} />
+      </div>
+    );
   }
 
+  // Redirect if user is still not set after loading
   if (!user) {
     localStorage.clear();
     navigate("/login");

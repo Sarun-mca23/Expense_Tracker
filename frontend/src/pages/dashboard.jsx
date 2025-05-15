@@ -36,7 +36,7 @@ export default function Dash() {
 
     const fetchUserDetails = async () => {
       try {
-        const response = await fetch('http://localhost:2022/api/user/me', {
+        const response = await fetch('https://expense-tracker-backend-0h9t.onrender.com/api/user/me', {
           headers: {
             'Authorization': `Bearer ${storedToken}`,
           },

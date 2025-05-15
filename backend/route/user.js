@@ -96,7 +96,7 @@ router.get('/me', authMiddleware, async (req, res) => {
 // Deposit route
 router.post('/deposit', authMiddleware, async (req, res) => {
   try {
-    const { amount } = req.body;
+    const { amount, description } = req.body; // ✅ extract description
 
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
       return res.status(400).json({ status: 'error', message: 'Invalid amount' });
@@ -110,11 +110,11 @@ router.post('/deposit', authMiddleware, async (req, res) => {
     user.balance += Number(amount);
     await user.save();
 
-    // ✅ Create and save transaction
     const transaction = new Transaction({
       userId: user._id,
       type: 'deposit',
-      amount: Number(amount)
+      amount: Number(amount),
+      description: description || "" // ✅ include description
     });
     await transaction.save();
 
@@ -126,10 +126,11 @@ router.post('/deposit', authMiddleware, async (req, res) => {
 });
 
 
+
 // Withdraw route
 router.post('/withdraw', authMiddleware, async (req, res) => {
   try {
-    const { amount } = req.body;
+    const { amount, description } = req.body; // ✅ extract description
 
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
       return res.status(400).json({ status: 'error', message: 'Invalid amount' });
@@ -147,11 +148,11 @@ router.post('/withdraw', authMiddleware, async (req, res) => {
     user.balance -= Number(amount);
     await user.save();
 
-    // ✅ Create and save transaction
     const transaction = new Transaction({
       userId: user._id,
       type: 'withdraw',
-      amount: Number(amount)
+      amount: Number(amount),
+      description: description || "" // ✅ include description
     });
     await transaction.save();
 
@@ -167,7 +168,7 @@ router.post('/withdraw', authMiddleware, async (req, res) => {
 router.get('/history', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
-    const { type } = req.query;  // support query param ?type=deposit
+    const { type } = req.query;
 
     let query = { userId };
 
@@ -175,12 +176,20 @@ router.get('/history', authMiddleware, async (req, res) => {
       query.type = type.toLowerCase();
     }
 
-    const transactions = await Transaction.find(query);
-    return res.status(200).json(transactions);
+    const transactions = await Transaction.find(query)
+      .sort({ createdAt: -1 }); // ✅ Sort latest first
+
+    return res.status(200).json({
+      status: "success",
+      transactions, // ✅ Includes amount, type, description, createdAt
+    });
 
   } catch (error) {
     console.error('Error fetching transaction history:', error);
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({
+      status: "error",
+      message: 'Server Error fetching transaction history'
+    });
   }
 });
 

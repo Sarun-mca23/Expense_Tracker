@@ -1,6 +1,9 @@
+body{
+ background: #b8c7f7;
+}
 /* Main Container */
 .Deposite {
-  background: linear-gradient(135deg, #e8eaec, #4da1eb);
+  background:  #e8eaec;
   height: 90vh;
   display: flex;
   justify-content: center;
@@ -76,6 +79,20 @@ input:focus {
 }
 
 /* Button Styles */
+.button,
+.depositBtn {
+  background-color: #4a90e2;
+  color: #ffffff;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
 .button,
 .withdrawBtn {
   background-color: #4a90e2;

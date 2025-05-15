@@ -16,7 +16,7 @@ const TransactionHistory = () => {
 
         const fetchTransactions = async () => {
             try {
-                const response = await fetch('http://localhost:2022/api/user/history', {
+                const response = await fetch('https://expense-tracker-backend-0h9t.onrender.com/api/user/history', {
                     method: 'GET',
                     headers: {
                         Authorization: `Bearer ${token}`,

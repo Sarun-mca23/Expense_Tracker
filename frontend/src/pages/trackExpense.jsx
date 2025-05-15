@@ -6,6 +6,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable'; // <--- This registers autoTable into jsPDF
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import myGif from './assets/Loading.gif';
 
 const ExpenseTable = () => {
   const [expenses, setExpenses] = useState([]);
@@ -29,14 +30,14 @@ const ExpenseTable = () => {
 
       try {
         // Fetch user profile to get email
-        const profileResponse = await axios.get('https://expense-tracker-backend-0h9t.onrender.com/api/user/me', {
+        const profileResponse = await axios.get('http://localhost:2022/api/user/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const userEmail = profileResponse.data.email;
 
         // Fetch expenses for the user by email
         const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/api/expenses/byEmail?email=${userEmail}`,
+          `http://localhost:2022/api/expenses/byEmail?email=${userEmail}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -150,7 +151,9 @@ const ExpenseTable = () => {
   // Calculate the total of filtered expenses
   const totalAmount = filteredExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    <img src={myGif} alt="Loading..." style={{ maxWidth: '100px' }} />
+  </div>;
   if (error) return <div>Error: {error}</div>;
 
   return (

@@ -3,7 +3,7 @@ import axios from 'axios';
 import styles from './styles/trackExpence.module.css';
 import { format, isSameDay, getYear, getMonth } from 'date-fns';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable'; // <--- This registers autoTable into jsPDF
+import 'jspdf-autotable';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import myGif from './assets/Loading.gif';
@@ -18,7 +18,6 @@ const ExpenseTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch expenses and sort by most recent first
   useEffect(() => {
     const fetchExpenses = async () => {
       const token = localStorage.getItem('UserToken');
@@ -29,19 +28,18 @@ const ExpenseTable = () => {
       }
 
       try {
-        // Fetch user profile to get email
         const profileResponse = await axios.get('https://expense-tracker-backend-0h9t.onrender.com/api/user/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const userEmail = profileResponse.data.email;
 
-        // Fetch expenses for the user by email
         const response = await axios.get(
           `https://expense-tracker-backend-0h9t.onrender.com/api/expenses/byEmail?email=${userEmail}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
+
         setExpenses(response.data);
         setFilteredExpenses(response.data);
       } catch (err) {
@@ -55,7 +53,6 @@ const ExpenseTable = () => {
     fetchExpenses();
   }, []);
 
-  // Apply filters (date, category, year, month)
   useEffect(() => {
     let updatedExpenses = [...expenses];
 
@@ -80,28 +77,12 @@ const ExpenseTable = () => {
 
     if (categoryFilter) {
       updatedExpenses = updatedExpenses.filter(
-        expense => expense.category.toLowerCase() === categoryFilter.toLowerCase()
+        expense => expense.category?.toLowerCase() === categoryFilter.toLowerCase()
       );
     }
 
     setFilteredExpenses(updatedExpenses);
   }, [expenses, selectedDate, selectedYear, selectedMonth, categoryFilter]);
-
-  const handleDateChange = (e) => {
-    setSelectedDate(e.target.value);
-  };
-
-  const handleCategoryChange = (e) => {
-    setCategoryFilter(e.target.value);
-  };
-
-  const handleYearChange = (e) => {
-    setSelectedYear(e.target.value);
-  };
-
-  const handleMonthChange = (e) => {
-    setSelectedMonth(e.target.value);
-  };
 
   const clearFilters = () => {
     setSelectedDate('');
@@ -112,24 +93,20 @@ const ExpenseTable = () => {
 
   const downloadPDF = () => {
     const doc = new jsPDF();
-
     doc.text('Expenses Report', 14, 15);
 
-    const tableColumn = ["Date", "Description", "Category", "Amount"];
-
+    const tableColumn = ['Date', 'Description', 'Category', 'Amount'];
     const tableRows = filteredExpenses.map(expense => {
       const createdAtDate = new Date(expense.createdAt);
-
-      // Check if the date is valid
       const formattedDate = isNaN(createdAtDate)
         ? 'Invalid Date'
         : format(createdAtDate, 'MMM dd, yyyy');
 
       return [
         formattedDate,
-        expense.description || 'N/A',  // Handle missing description
-        expense.category || 'N/A',     // Handle missing category
-        `$${expense.amount ? Number(expense.amount).toFixed(2) : '0.00'}` // Handle missing amount
+        expense.description || 'N/A',
+        expense.category || 'N/A',
+        `₹${expense.amount ? Number(expense.amount).toFixed(2) : '0.00'}`
       ];
     });
 
@@ -148,22 +125,30 @@ const ExpenseTable = () => {
     doc.save('expenses_report.pdf');
   };
 
-  // Calculate the total of filtered expenses
   const totalAmount = filteredExpenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
 
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-    <img src={myGif} alt="Loading..." style={{ maxWidth: '100px' }} />
-  </div>;
-  if (error) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-   <p Error: {error}style={{ maxWidth: '100px' }} />
-  </div>;<div>Error: {error}</div>;
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <img src={myGif} alt="Loading..." style={{ maxWidth: '100px' }} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <p style={{ color: 'red' }}>Error: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
       <div className={styles.tableContainer}>
         <h1>Expenses</h1>
 
-        {/* Filter Controls */}
+        {/* Filters */}
         <div className={styles.filtersWrapper}>
           <div className={styles.filterGroup}>
             <label htmlFor="yearFilter">Filter by Year:</label>
@@ -171,14 +156,14 @@ const ExpenseTable = () => {
               id="yearFilter"
               type="number"
               value={selectedYear}
-              onChange={handleYearChange}
+              onChange={(e) => setSelectedYear(e.target.value)}
               placeholder="YYYY"
             />
           </div>
 
           <div className={styles.filterGroup}>
             <label htmlFor="monthFilter">Filter by Month:</label>
-            <select id="monthFilter" value={selectedMonth} onChange={handleMonthChange}>
+            <select id="monthFilter" value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
               <option value="">-- Select --</option>
               {Array.from({ length: 12 }, (_, i) => (
                 <option key={i} value={i + 1}>
@@ -194,13 +179,13 @@ const ExpenseTable = () => {
               id="dateFilter"
               type="date"
               value={selectedDate}
-              onChange={handleDateChange}
+              onChange={(e) => setSelectedDate(e.target.value)}
             />
           </div>
 
           <div className={styles.filterGroup}>
             <label htmlFor="categoryFilter">Filter by Category:</label>
-            <select id="categoryFilter" value={categoryFilter} onChange={handleCategoryChange}>
+            <select id="categoryFilter" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
               <option value="">-- Select --</option>
               <option value="food">Food</option>
               <option value="movie">Movie</option>
@@ -212,17 +197,12 @@ const ExpenseTable = () => {
           </div>
 
           <div className={styles.buttonGroup}>
-            <button className={styles.clearBtn} onClick={clearFilters}>
-              Clear Filters
-            </button>
-
-            <button className={styles.downloadBtn} onClick={downloadPDF}>
-              Download PDF
-            </button>
+            <button className={styles.clearBtn} onClick={clearFilters}>Clear Filters</button>
+            <button className={styles.downloadBtn} onClick={downloadPDF}>Download PDF</button>
           </div>
         </div>
 
-        {/* Expense Table */}
+        {/* Table */}
         <table className={styles.table}>
           <thead>
             <tr>
@@ -234,13 +214,13 @@ const ExpenseTable = () => {
           </thead>
           <tbody>
             {filteredExpenses.length > 0 ? (
-              filteredExpenses.map((expense) => {
+              filteredExpenses.map(expense => {
                 const createdAtDate = new Date(expense.createdAt);
                 const formattedDate = isNaN(createdAtDate)
                   ? 'Invalid Date'
                   : format(createdAtDate, 'MMM dd, yyyy');
                 return (
-                  <tr key={expense._id}> {/* Changed to expense._id as key */}
+                  <tr key={expense._id}>
                     <td>{formattedDate}</td>
                     <td>{expense.description || 'N/A'}</td>
                     <td>{expense.category || 'N/A'}</td>
@@ -256,11 +236,9 @@ const ExpenseTable = () => {
           </tbody>
         </table>
 
-        {/* Total Amount Display */}
         <div className={styles.totalContainer}>
           <strong>Total: ₹ {totalAmount.toFixed(2)}</strong>
         </div>
-
       </div>
       <ToastContainer />
     </div>

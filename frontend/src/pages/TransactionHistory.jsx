@@ -16,7 +16,7 @@ const TransactionHistory = () => {
 
         const fetchTransactions = async () => {
             try {
-                const response = await fetch('https://expense-tracker-backend-0h9t.onrender.com/api/user/history', {
+                const response = await fetch('http://localhost:2022/api/user/history', {
                     method: 'GET',
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -28,7 +28,7 @@ const TransactionHistory = () => {
                 }
 
                 const data = await response.json();
-                setTransactions(data);
+                setTransactions(data.transactions || data); // supports both direct array or wrapped format
                 console.log("Transactions fetched from server:", data);
                 setLoading(false);
             } catch (error) {
@@ -62,7 +62,6 @@ const TransactionHistory = () => {
 
         setFilteredTransactions(updated);
     }, [transactions, selectedDate, typeFilter]);
-
 
     const totalAmount = filteredTransactions.reduce((sum, txn) => sum + txn.amount, 0);
 
@@ -112,6 +111,7 @@ const TransactionHistory = () => {
                             <th>Date</th>
                             <th>Type</th>
                             <th>Amount</th>
+                            <th>Description</th> {/* ✅ Added description column */}
                         </tr>
                     </thead>
                     <tbody>
@@ -121,11 +121,12 @@ const TransactionHistory = () => {
                                     <td>{format(new Date(txn.createdAt), 'MMM dd, yyyy')}</td>
                                     <td>{txn.type ? txn.type.charAt(0).toUpperCase() + txn.type.slice(1) : 'N/A'}</td>
                                     <td>₹{txn.amount}</td>
+                                    <td>{txn.description || '—'}</td> {/* ✅ Show description */}
                                 </tr>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="3" style={{ textAlign: 'center' }}>No transactions found.</td>
+                                <td colSpan="4" style={{ textAlign: 'center' }}>No transactions found.</td> {/* ✅ Adjusted colspan */}
                             </tr>
                         )}
                     </tbody>

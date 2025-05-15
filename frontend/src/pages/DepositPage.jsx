@@ -34,7 +34,7 @@ const TransactionPage = () => {
 
     const fetchUserProfile = async () => {
       try {
-        const res = await axios.get("http://localhost:2022/api/user/me", {
+        const res = await axios.get("https://expense-tracker-backend-0h9t.onrender.com/api/user/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -79,7 +79,7 @@ const TransactionPage = () => {
 
     try {
       const res = await axios.post(
-        `http://localhost:2022/api/user/${actionType}`,
+        `https://expense-tracker-backend-0h9t.onrender.com/api/user/${actionType}`,
         { amount: transactionAmount, description }, // ✅ Send description
         {
           headers: {

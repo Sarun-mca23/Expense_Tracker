@@ -141,6 +141,20 @@
   transform: scale(0.98);
 }
 
+.loaderWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  background-color: #f9f9f9; /* Optional: background to match your theme */
+  flex-direction: column;
+  text-align: center;
+}
+
+.loader {
+  width: 60px; /* Adjust size as needed */
+  height: 60px;
+}
 
 /* Responsive tweaks */
 @media (max-width: 768px) {

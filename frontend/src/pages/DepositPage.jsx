@@ -12,13 +12,13 @@ const TransactionPage = () => {
   const [token, setToken] = useState(null);
   const [balance, setBalance] = useState(0);
   const [amount, setAmount] = useState("");
+  const [description, setDescription] = useState(""); // ✅ New state for description
   const [showModal, setShowModal] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [actionType, setActionType] = useState(""); // "deposit" or "withdraw"
-  const [binInput, setBinInput] = useState(""); // State for BIN input in the modal
+  const [actionType, setActionType] = useState("");
+  const [binInput, setBinInput] = useState("");
   const navigate = useNavigate();
 
-  // Fetch stored token on component mount
   useEffect(() => {
     const storedToken = localStorage.getItem("UserToken");
     if (!storedToken) {
@@ -29,17 +29,16 @@ const TransactionPage = () => {
     }
   }, [navigate]);
 
-  // Fetch user profile when token is available
   useEffect(() => {
     if (!token) return;
 
     const fetchUserProfile = async () => {
       try {
-        const res = await axios.get('https://expense-tracker-backend-0h9t.onrender.com/api/user/me', {
+        const res = await axios.get("http://localhost:2022/api/user/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        console.log("Fetched user profile:", res.data);  // ✅ Print profile details
+        console.log("Fetched user profile:", res.data);
         setUserData(res.data);
         setBalance(Number(res.data.balance));
       } catch (err) {
@@ -56,7 +55,6 @@ const TransactionPage = () => {
     fetchUserProfile();
   }, [token, navigate]);
 
-  // Common transaction handler (deposit/withdraw)
   const initiateTransaction = (type) => {
     const transactionAmount = Number(amount);
 
@@ -71,7 +69,7 @@ const TransactionPage = () => {
     }
 
     setActionType(type);
-    setShowModal(true); // Open modal for BIN verification
+    setShowModal(true);
   };
 
   const handleConfirmedTransaction = async () => {
@@ -81,8 +79,8 @@ const TransactionPage = () => {
 
     try {
       const res = await axios.post(
-        `https://expense-tracker-backend-0h9t.onrender.com/api/user/${actionType}`,   // ✅ No userId in URL anymore
-        { amount: transactionAmount },
+        `http://localhost:2022/api/user/${actionType}`,
+        { amount: transactionAmount, description }, // ✅ Send description
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -92,11 +90,12 @@ const TransactionPage = () => {
       );
 
       if (res.data.status === "success") {
-        setBalance(res.data.balance);  // Update balance from server
+        setBalance(res.data.balance);
         toast.success(`${capitalize(actionType)} successful!`, {
           className: "toast-success",
         });
         setAmount("");
+        setDescription(""); // ✅ Clear description after success
       } else {
         toast.error(res.data.message || `Failed to ${actionType}`, {
           className: "toast-error",
@@ -137,6 +136,15 @@ const TransactionPage = () => {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             min="1"
+          />
+
+          {/* ✅ New description input */}
+          <label><b>DESCRIPTION</b></label>
+          <input
+            type="text"
+            placeholder="ENTER A DESCRIPTION (OPTIONAL)"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           />
 
           <div className={style.buttonRow}>

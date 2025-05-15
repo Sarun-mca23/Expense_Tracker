@@ -104,7 +104,7 @@ body {
 .hamburger {
   display: none;
   font-size: 30px;
-  color: rgb(11, 16, 81);
+  color: rgb(255, 255, 255);
   cursor: pointer;
   /* Position the hamburger icon on the right */
   position: absolute;

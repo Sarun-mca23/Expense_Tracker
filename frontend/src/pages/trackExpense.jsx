@@ -30,14 +30,14 @@ const ExpenseTable = () => {
 
       try {
         // Fetch user profile to get email
-        const profileResponse = await axios.get('http://localhost:2022/api/user/me', {
+        const profileResponse = await axios.get('https://expense-tracker-backend-0h9t.onrender.com/api/user/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const userEmail = profileResponse.data.email;
 
         // Fetch expenses for the user by email
         const response = await axios.get(
-          `http://localhost:2022/api/expenses/byEmail?email=${userEmail}`,
+          `https://expense-tracker-backend-0h9t.onrender.com/api/expenses/byEmail?email=${userEmail}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

@@ -46,7 +46,7 @@ const TransactionHistory = () => {
 
         const fetchBalance = async () => {
             try {
-                const response = await fetch('https://expense-tracker-frontend-bz32.onrender.comapi/user/me', {
+                const response = await fetch('https://expense-tracker-frontend-bz32.onrender.com/api/user/me', {
                     method: 'GET',
                     headers: {
                         Authorization: `Bearer ${token}`,

@@ -120,7 +120,7 @@ const TransactionHistory = () => {
 
                 console.log('Sending DELETE request with token:', token);
 
-                const response = await fetch(`http://localhost:2022/api/user/history/${id}`, {
+                const response = await fetch(`https://expense-tracker-backend-0h9t.onrender.com/api/user/history/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',

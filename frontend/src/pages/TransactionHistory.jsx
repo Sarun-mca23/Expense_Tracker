@@ -9,14 +9,22 @@ const TransactionHistory = () => {
     const [selectedDate, setSelectedDate] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [editMode, setEditMode] = useState(false);
+    const [selectedIds, setSelectedIds] = useState([]);
+    const [balance, setBalance] = useState(0);
 
     useEffect(() => {
         const token = localStorage.getItem('UserToken');
-        console.log("Fetched token:", token);
+
+        if (!token) {
+            setError('No token found. Please log in again.');
+            setLoading(false);
+            return;
+        }
 
         const fetchTransactions = async () => {
             try {
-                const response = await fetch('https://expense-tracker-backend-0h9t.onrender.com/api/user/history', {
+                const response = await fetch('http://localhost:2022/api/user/history', {
                     method: 'GET',
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -28,17 +36,36 @@ const TransactionHistory = () => {
                 }
 
                 const data = await response.json();
-                setTransactions(data.transactions || data); // supports both direct array or wrapped format
-                console.log("Transactions fetched from server:", data);
+                setTransactions(data.transactions || data);
                 setLoading(false);
             } catch (error) {
                 setLoading(false);
                 setError(error.message);
-                console.error('Error fetching transaction history:', error);
+            }
+        };
+
+        const fetchBalance = async () => {
+            try {
+                const response = await fetch('http://localhost:2022/api/user/me', {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch balance');
+                }
+
+                const data = await response.json();
+                setBalance(data.balance);
+            } catch (error) {
+                console.error('Error fetching balance:', error);
             }
         };
 
         fetchTransactions();
+        fetchBalance();
     }, []);
 
     useEffect(() => {
@@ -57,9 +84,7 @@ const TransactionHistory = () => {
             );
         }
 
-        // Sort by newest first
         updated.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
         setFilteredTransactions(updated);
     }, [transactions, selectedDate, typeFilter]);
 
@@ -72,6 +97,72 @@ const TransactionHistory = () => {
         setTypeFilter('');
     };
 
+    const handleCheckboxChange = (id) => {
+        setSelectedIds(prev =>
+            prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+        );
+    };
+
+    const handleDeleteSelected = async () => {
+        const token = localStorage.getItem('UserToken');
+
+        if (!token) {
+            console.error('No token found! User might not be logged in.');
+            return;
+        }
+
+        try {
+            let updatedTransactions = [...transactions];
+            let newBalance = balance;
+
+            for (const id of selectedIds) {
+                const txn = transactions.find(t => t._id === id);
+
+                console.log('Sending DELETE request with token:', token);
+
+                const response = await fetch(`http://localhost:2022/api/user/history/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error(`Failed to delete transaction ${id}:`, response.status, errorText);
+                    continue;
+                }
+
+                if (txn) {
+                    if (txn.type === 'deposit') {
+                        newBalance -= txn.amount;
+                    } else if (txn.type === 'withdraw') {
+                        newBalance += txn.amount;
+                    }
+
+                    updatedTransactions = updatedTransactions.filter(t => t._id !== id);
+                }
+            }
+
+            setTransactions(updatedTransactions);
+            setBalance(newBalance);
+            setEditMode(false);
+            setSelectedIds([]);
+        } catch (error) {
+            console.error('Error deleting transactions:', error);
+        }
+    };
+
+    const toggleEditMode = () => {
+        if (editMode && selectedIds.length > 0) {
+            handleDeleteSelected();
+        } else {
+            setEditMode(!editMode);
+            setSelectedIds([]);
+        }
+    };
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
@@ -79,6 +170,10 @@ const TransactionHistory = () => {
         <div className={styles.container}>
             <div className={styles.tableContainer}>
                 <h1>Transaction History</h1>
+
+                <div className={styles.balanceDisplay}>
+                    <strong>Current Balance: ₹{balance.toFixed(2)}</strong>
+                </div>
 
                 <div className={styles.controlsWrapper}>
                     <div className={styles.filterGroup}>
@@ -111,7 +206,8 @@ const TransactionHistory = () => {
                             <th>Date</th>
                             <th>Type</th>
                             <th>Amount</th>
-                            <th>Description</th> {/* ✅ Added description column */}
+                            <th>Description</th>
+                            {editMode && <th>Select</th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -121,20 +217,34 @@ const TransactionHistory = () => {
                                     <td>{format(new Date(txn.createdAt), 'MMM dd, yyyy')}</td>
                                     <td>{txn.type ? txn.type.charAt(0).toUpperCase() + txn.type.slice(1) : 'N/A'}</td>
                                     <td>₹{txn.amount}</td>
-                                    <td>{txn.description || '—'}</td> {/* ✅ Show description */}
+                                    <td>{txn.description || '—'}</td>
+                                    {editMode && (
+                                        <td>
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedIds.includes(txn._id)}
+                                                onChange={() => handleCheckboxChange(txn._id)}
+                                            />
+                                        </td>
+                                    )}
                                 </tr>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="4" style={{ textAlign: 'center' }}>No transactions found.</td> {/* ✅ Adjusted colspan */}
+                                <td colSpan={editMode ? 5 : 4} style={{ textAlign: 'center' }}>No transactions found.</td>
                             </tr>
                         )}
                     </tbody>
                 </table>
 
-                {/* Total amount */}
                 <div className={styles.totalContainer}>
                     <strong>Total: ₹{totalAmount.toFixed(2)}</strong>
+                </div>
+
+                <div className={styles.editButtonWrapper}>
+                    <button className={styles.editBtn} onClick={toggleEditMode}>
+                        {editMode && selectedIds.length > 0 ? 'Delete Selected' : editMode ? 'Cancel' : 'Edit'}
+                    </button>
                 </div>
             </div>
         </div>

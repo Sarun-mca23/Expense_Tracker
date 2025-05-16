@@ -1,5 +1,6 @@
 // routes/user.js
 const express = require('express');
+const mongoose= require('mongoose');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const Transaction = require('../models/transaction');
@@ -8,7 +9,7 @@ require('dotenv').config();
 const router = express.Router();
 
 // =================== AUTH MIDDLEWARE =====================
-const authMiddleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -17,8 +18,12 @@ const authMiddleware = (req, res, next) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'yoursecretkey');
 
-      // Ensure token contains 'id'
-      req.user = { id: decoded.id };  // This is crucial!
+      const user = await User.findById(decoded.id);
+      if (!user) {
+        return res.status(401).json({ error: 'Unauthorized: User not found' });
+      }
+
+      req.user = user; // Attach full user object if needed
       next();
     } catch (error) {
       console.error('Token verification failed:', error);
@@ -28,7 +33,6 @@ const authMiddleware = (req, res, next) => {
     return res.status(401).json({ error: 'No token provided' });
   }
 };
-
 
 // =================== UPDATE BALANCE =====================
 router.post('/updateBalance', authMiddleware, async (req, res) => {
@@ -165,6 +169,7 @@ router.post('/withdraw', authMiddleware, async (req, res) => {
 
 
 // =================== TRANSACTION HISTORY =====================
+// GET /history - Fetch user transaction history
 router.get('/history', authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -176,12 +181,11 @@ router.get('/history', authMiddleware, async (req, res) => {
       query.type = type.toLowerCase();
     }
 
-    const transactions = await Transaction.find(query)
-      .sort({ createdAt: -1 }); // ✅ Sort latest first
+    const transactions = await Transaction.find(query).sort({ createdAt: -1 });
 
     return res.status(200).json({
       status: "success",
-      transactions, // ✅ Includes amount, type, description, createdAt
+      transactions,
     });
 
   } catch (error) {
@@ -192,6 +196,47 @@ router.get('/history', authMiddleware, async (req, res) => {
     });
   }
 });
+
+// DELETE /history/:id - Delete a specific transaction by ID
+router.delete('/history/:id', authMiddleware, async (req, res) => {
+    const { id: transactionId } = req.params;
+    const userId = req.user?._id;  // Optional chaining to avoid crash
+
+    if (!userId) {
+        return res.status(401).json({ message: 'Unauthorized: User not found' });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(transactionId)) {
+        return res.status(400).json({ message: 'Invalid transaction ID' });
+    }
+
+    try {
+        const transaction = await Transaction.findOneAndDelete({
+            _id: transactionId,
+            userId: userId
+        });
+
+        if (!transaction) {
+            return res.status(404).json({ message: 'Transaction not found' });
+        }
+
+        const user = await User.findById(userId);
+
+        if (transaction.type === 'deposit') {
+            user.balance -= transaction.amount;
+        } else if (transaction.type === 'withdraw') {
+            user.balance += transaction.amount;
+        }
+
+        await user.save();
+
+        res.status(200).json({ message: 'Transaction deleted', newBalance: user.balance });
+    } catch (err) {
+        console.error('Error deleting transaction:', err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 
 
 module.exports = router;

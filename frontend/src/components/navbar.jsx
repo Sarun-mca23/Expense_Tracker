@@ -14,7 +14,7 @@ const Navbar = () => {
     <nav className={styles.navbar}>
       <div className={styles.navbarContainer}>
         <div className={styles.logo}>
-          <a href="/">R I S A</a>
+          <a href="/">Spendo</a>
         </div>
         <ul className={`${styles.navLinks} ${isMenuOpen ? styles.active : ''}`}>
           <li><a href="/dashboard">Home</a></li>
